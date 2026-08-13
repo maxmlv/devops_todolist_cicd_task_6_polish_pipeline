@@ -70,6 +70,7 @@ jobs:
   python-build:
     name: Python Build
     runs-on: ${{ github.event_name == 'workflow_dispatch' && inputs.OsType || 'ubuntu-latest' }}
+    needs: python-unit-tests
     defaults:
       run:
         working-directory: ./src
