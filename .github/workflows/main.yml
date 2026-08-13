@@ -9,7 +9,7 @@ on:
     branches: ["main"]
   workflow_dispatch:
     inputs:
-      PythoVersion:
+      PythonVersion:
         description: 'Python version to build'
         required: true
         type: choice
@@ -75,6 +75,19 @@ jobs:
       run:
         working-directory: ./src
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ github.event_name == 'workflow_dispatch' && inputs.PythonVersion || '3.8' }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
       - name: Upload python artifacts
         uses: actions/upload-artifact@v4
         with:
