@@ -13,20 +13,16 @@ on:
     branches: ["main"]
   workflow_dispatch:
     inputs:
-      PythonVersion:
-        description: 'Python version to build'
-        required: true
+      artifact:
+        description: 'Which build to deploy'
+        required: false
         type: choice
-        options: ['3.8', '3.9']
-      OsType:
-        description: 'OS to build on'
-        required: true
-        type: choice
-        options: ['ubuntu-latest', 'windows-latest']
-
-
-env:
-  DockerImageName: todoapp
+        default: "ubuntu-latest-3.8"
+        options:
+          - ubuntu-latest-3.8
+          - ubuntu-latest-3.9
+          - windows-latest-3.8
+          - windows-latest-3.9
 
 jobs:
   python-ci:
@@ -101,7 +97,7 @@ jobs:
     - uses: actions/download-artifact@v4
       name: Download python artifacts
       with:
-        name: python-artifacts-${{ github.event_name == 'workflow_dispatch' && inputs.OsType || 'ubuntu-latest' }}-${{ github.event_name == 'workflow_dispatch' && inputs.PythonVersion || '3.8' }}
+        name: python-artifacts-${{ github.event_name == 'workflow_dispatch' && inputs.artifact || 'ubuntu-latest-3.8' }}
         path: .
 
     - name: Login to Docker Hub
@@ -115,7 +111,7 @@ jobs:
       with:
         push: true
         context: ./src
-        tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DockerImageName }}:${{ github.sha }}
+        tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.DockerImageName }}:${{ github.sha }}
 
   helm-ci:
     runs-on: ubuntu-latest
