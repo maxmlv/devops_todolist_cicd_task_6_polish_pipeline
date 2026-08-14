@@ -75,7 +75,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: python-artifacts-${{ matrix.OsType }}-${{ matrix.PythonVersion }}
-          path: ./src
+          path: .
 
       - name: Upload helm artifacts
         if: github.ref_name == 'main' && matrix.OsType == 'ubuntu-latest' && matrix.PythonVersion == '3.8'
